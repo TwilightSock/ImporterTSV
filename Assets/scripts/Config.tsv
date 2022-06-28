@@ -1,0 +1,11 @@
+			
+items	id	cost	tags
+	item1	10	#some_string
+	item1	15	#other_string
+	item1	20	#item_str
+other_items	name	is true	color
+	item1	TRUE	#F0F0F0
+	item1	FALSE	#F0F0F0
+	item1	TRUE	#F0F0F0
+min_age	18		
+default_color	#F0F0F0		
