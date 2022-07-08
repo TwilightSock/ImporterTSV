@@ -20,7 +20,7 @@ namespace JuiceKit
     }
 
 
-    [Serializable]
+    [System.Serializable]
     public class Config : BaseConfig
     {
         [SerializeField] 
@@ -44,6 +44,7 @@ namespace JuiceKit
 
     }
 
+    [Serializable]
     public class Items
     {
         [SerializeField] private string id;
@@ -62,6 +63,7 @@ namespace JuiceKit
         public string Tags => tags;
     }
 
+    [Serializable]
     public class OtherItems
     {
         [SerializeField] private string name;

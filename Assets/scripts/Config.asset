@@ -13,5 +13,25 @@ MonoBehaviour:
   m_Name: Config
   m_EditorClassIdentifier: 
   config:
+    items:
+    - id: item1
+      cost: 10
+      tags: '#some_string'
+    - id: item1
+      cost: 15
+      tags: '#other_string'
+    - id: item1
+      cost: 20
+      tags: '#item_str'
+    otherItems:
+    - name: item1
+      isTrue: 1
+      color: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
+    - name: item1
+      isTrue: 0
+      color: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
+    - name: item1
+      isTrue: 1
+      color: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
     minAge: 18
     defaultColor: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
