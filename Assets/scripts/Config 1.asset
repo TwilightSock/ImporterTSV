@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 265c3dacf7cb90849a2d38e688e26182, type: 3}
-  m_Name: Config
+  m_Name: Config 1
   m_EditorClassIdentifier: 
   config:
-    minAge: 18
-    defaultColor: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
+    minAge: 0
+    defaultColor: {r: 0, g: 0, b: 0, a: 0}

@@ -4,60 +4,79 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace JuiceKit
 {
+
+    public static class StringExtension
+    {
+        public static Color StringToColor(this string colorString)
+        {
+            Color color = new Color();
+            ColorUtility.TryParseHtmlString(colorString, out color);
+            return color;
+        }
+    }
+
+
     [Serializable]
     public class Config : BaseConfig
     {
-        [SerializeField] private Items items;
-        [SerializeField] private OtherItems otherItems;
+        [SerializeField] 
+        private Items[] items;
+        [SerializeField] 
+        private OtherItems[] otherItems;
+        [SerializeField]
         private int minAge;
         [SerializeField] 
-        private string defaultColor;
+        private Color defaultColor;
 
-        public Config(Items items, OtherItems otherItems, int minAge, string defaultColor)
+        
+
+        public Config(Items[] items, OtherItems[] otherItems, string minAge, string defaultColor)
         {
             this.items = items;
             this.otherItems = otherItems;
-            this.minAge = minAge;
-            this.defaultColor = defaultColor;
+            this.minAge = int.Parse(minAge);
+            this.defaultColor = defaultColor.StringToColor();
         }
+
     }
 
     public class Items
     {
-        [SerializeField] private List<string> id;
-        [SerializeField] private List<int> cost;
-        [SerializeField] private List<string> tags;
+        [SerializeField] private string id;
+        [SerializeField] private int cost;
+        [SerializeField] private string tags;
 
-        public Items(List<string> id,List<int> cost,List<string> tags)
+        public Items(string id,string cost,string tags)
         {
             this.id = id;
-            this.cost = cost;
+            this.cost = int.Parse(cost);
             this.tags = tags;
         }
 
-        public List<string> Id => id; 
-        public List<int> Cost => cost;
-        public List<string> Tags => tags;
+        public string Id => id; 
+        public int Cost => cost;
+        public string Tags => tags;
     }
 
     public class OtherItems
     {
-        [SerializeField] private List<string> name;
-        [SerializeField] private List<bool> isTrue;
-        [SerializeField] private List<string> color;
+        [SerializeField] private string name;
+        [SerializeField] private bool isTrue;
+        [SerializeField] private Color color;
 
-        public OtherItems(List<string> name,List<bool> isTrue,List<string> color)
+        public OtherItems(string name,string isTrue,string color)
         {
             this.name = name;
-            this.isTrue = isTrue;
-            this.color = color;
+            this.isTrue = bool.Parse(isTrue);
+            this.color = color.StringToColor();
         }
 
-        public List<string> Name => name;
-        public List<bool> IsTrue => isTrue;
-        public List<string> Color => color;
+        public string Name => name;
+        public bool IsTrue => isTrue;
+        public Color Color => color;
     }
 }

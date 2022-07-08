@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 
 public static class Ext
 {
     public static string[][] SplitStrings(this string _string, char _splitCh)
-        {
+    {
             _string = _string.Replace("\r\n", "\n");
             string[] _lines = _string.Split('\n');
             string[][] _splitStrings = new string[_lines.Length][];
@@ -18,7 +19,8 @@ public static class Ext
             }
 
             return _splitStrings;
-        }
+    }
+
 }
 
 namespace JuiceKit.Editor
