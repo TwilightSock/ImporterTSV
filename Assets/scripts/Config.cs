@@ -26,21 +26,17 @@ namespace JuiceKit
         [SerializeField] 
         private Items[] items;
         [SerializeField] 
-        private OtherItems[] otherItems;
+        private Other_Items[] other_Items;
         [SerializeField]
-        private int minAge;
+        private int min_Age;
         [SerializeField] 
-        private Color defaultColor;
+        private Color default_Color;
 
-        
+        public Items[] Items => items; 
+        public Other_Items[] OtherItems => other_Items;
+        public int MinAge => min_Age;
+        public Color DefaultColor => default_Color;
 
-        public Config(Items[] items, OtherItems[] otherItems, string minAge, string defaultColor)
-        {
-            this.items = items;
-            this.otherItems = otherItems;
-            this.minAge = int.Parse(minAge);
-            this.defaultColor = defaultColor.StringToColor();
-        }
 
     }
 
@@ -51,31 +47,17 @@ namespace JuiceKit
         [SerializeField] private int cost;
         [SerializeField] private string tags;
 
-        public Items(string id,string cost,string tags)
-        {
-            this.id = id;
-            this.cost = int.Parse(cost);
-            this.tags = tags;
-        }
-
         public string Id => id; 
         public int Cost => cost;
         public string Tags => tags;
     }
 
     [Serializable]
-    public class OtherItems
+    public class Other_Items
     {
         [SerializeField] private string name;
         [SerializeField] private bool isTrue;
         [SerializeField] private Color color;
-
-        public OtherItems(string name,string isTrue,string color)
-        {
-            this.name = name;
-            this.isTrue = bool.Parse(isTrue);
-            this.color = color.StringToColor();
-        }
 
         public string Name => name;
         public bool IsTrue => isTrue;

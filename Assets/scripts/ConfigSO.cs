@@ -14,111 +14,106 @@ namespace JuiceKit
     {
         protected override void ParseRaw(string[][] _configRaw)
         {
-            List<Items> itemsList = new List<Items>();
-            List<OtherItems> otherItemsList= new List<OtherItems>();
-            string min_age = String.Empty;
-            string default_color = String.Empty;
-            for (int i = 0;i< _configRaw.Length;i++)
+            Config config = new Config();
+            Type configType = config.GetType();
+            for (int i = 0; i < _configRaw.Length; i++)
             {
                 if (CheckEmptyLine(_configRaw[i]))
                 {
                     continue;
                 }
 
-                if (_configRaw[i][0] == "items")
+                if (_configRaw[i][0] != "")
                 {
-                    
-                    for (int j = i+1; j < _configRaw.Length; j++)
+                    FieldInfo field = configType.GetField(_configRaw[i][0], BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
+                    if (field.FieldType.IsArray)
                     {
-                        List<string> lineList = new List<string>();
-                        if (_configRaw[j][0] != "")
-                        {
-                            break;
-                        }
-
-                        for (int value = 1; value < _configRaw[j].Length; value++)
-                        {
-                            lineList.Add(_configRaw[j][value]);
-                        }
-
-                        Type type = typeof(Items);
-                        ConstructorInfo[] constructorsInfo = type.GetConstructors();
-                        ConstructorInfo constructor = constructorsInfo[0];
-                        Items item = (Items)constructor.Invoke(lineList.ToArray());
-                        itemsList.Add(item);
-                    }
-                }
-                
-                if (_configRaw[i][0] == "other_items")
-                {
-
-                    for (int j = i + 1; j < _configRaw.Length; j++)
-                    {
-                        List<string> lineList = new List<string>();
-                        if (_configRaw[j][0] != "")
-                        {
-                            break;
-                        }
-
-                        for (int value = 1; value < _configRaw[j].Length; value++)
-                        {
-                            lineList.Add(_configRaw[j][value]);
-                        }
-
-                        Type type = typeof(OtherItems);
-                        ConstructorInfo[] constructorsInfo = type.GetConstructors();
-                        ConstructorInfo constructor = constructorsInfo[0];
-                        OtherItems otherItem = (OtherItems)constructor.Invoke(lineList.ToArray());
-                        otherItemsList.Add(otherItem);
-                    }
-
-                }
-
-                if (_configRaw[i][0] == "min_age")
-                {
-
-                    for (int j = i; j < _configRaw.Length; j++)
-                    {
-                        if (_configRaw[j][0] == "default_color")
-                        {
-                            break;
-                        }
-
-                        List<string> lineList = new List<string>();
+                        List<object> objList = new List<object>();
                         
-                        for (int value = 1; value < _configRaw[j].Length; value++)
+                        List<string> fieldList = new List<string>();
+                        for (int itr = 1; itr < _configRaw[i].Length; itr++)
                         {
-                            lineList.Add(_configRaw[j][value]);
+                            if (_configRaw[i][itr].Contains(' '))
+                            {
+                                fieldList.Add(String.Concat(_configRaw[i][itr].Split(' ')));
+                            }
+                            else
+                            {
+                                fieldList.Add(_configRaw[i][itr]);
+                            }
+                            
                         }
 
-                        min_age = lineList[0];
+                        for (int itr = i + 1; itr < _configRaw.Length; itr++)
+                        {
+                            if (_configRaw[itr][0] != "")
+                            {
+                                break;
+                            }
+
+                            object objInstance = Activator.CreateInstance(field.FieldType.GetElementType());
+                            
+                            for (int j = 1; j < _configRaw[itr].Length;j++)
+                            {
+                                if (objInstance.GetType().GetField(fieldList[j-1], BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase).FieldType.IsEquivalentTo(typeof(UnityEngine.Color)))
+                                {
+                                    objInstance.GetType().GetField(fieldList[j - 1],
+                                            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase)
+                                        .SetValue(objInstance, _configRaw[itr][j].StringToColor());
+
+                                }
+                                else
+                                {
+                                    objInstance.GetType().GetField(fieldList[j - 1],
+                                            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase)
+                                        .SetValue(objInstance,
+                                            Convert.ChangeType(_configRaw[itr][j],
+                                                objInstance.GetType().GetField(fieldList[j - 1],
+                                                    BindingFlags.Instance | BindingFlags.NonPublic |
+                                                    BindingFlags.IgnoreCase).FieldType));
+                                }
+                            }
+                            objList.Add(objInstance);
+                        }
+                        
+                        Array objectArray = Array.CreateInstance(field.FieldType.GetElementType(),objList.Count);
+                        for (int j = 0; j < objList.Count; j++)
+                        {
+                            objectArray.SetValue(objList[j],j);
+                        }
+
+                        field.SetValue(config,objectArray);
+
                     }
-                }
-
-                if (_configRaw[i][0] == "default_color")
-                {
-
-                    for (int j = i; j < _configRaw.Length; j++)
+                    else
                     {
-                        List<string> lineList = new List<string>();
-
-                        for (int value = 1; value < _configRaw[j].Length; value++)
+                        string bufferString = String.Empty;
+                        for (int j = 1; j < _configRaw[i].Length; j++)
                         {
-                            lineList.Add(_configRaw[j][value]);
+                            if (_configRaw[i][j] == " ")
+                            {
+                                break;
+                            }
+
+                            bufferString += _configRaw[i][j];
                         }
 
-                        default_color = lineList[0];
+                        if (field.FieldType.IsEquivalentTo(typeof(UnityEngine.Color)))
+                        {
+                            field.SetValue(config, bufferString.StringToColor());
+                        }
+                        else
+                        {
+                            field.SetValue(config, Convert.ChangeType(bufferString, field.FieldType));
+                        }
+
+                       
+                        
                     }
                 }
-
-
             }
-            
-            Type configType = typeof(Config);
-            ConstructorInfo[] configConstructorsInfo = configType.GetConstructors();
-            ConstructorInfo configConstructor = configConstructorsInfo[0];
-            Config config = (Config)configConstructor.Invoke(new object[]{itemsList.ToArray(),otherItemsList.ToArray(), min_age, default_color});
-            SetConfig(config);
+
+             SetConfig(config);
 
         }
 
@@ -145,6 +140,7 @@ namespace JuiceKit
 
             return false;
         }
+
     }
 
 
