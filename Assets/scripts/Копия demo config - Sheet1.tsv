@@ -1,0 +1,12 @@
+				
+items	id	cost	tags	smth
+	item1	10	#some_string	5
+	item1	15	#other_string	6
+	item1	20	#item_str	7
+other_items	name	is true	color	
+	item1	TRUE	#F0F0F0	
+	item1	FALSE	#F0F0F0	
+	item1	TRUE	#F0F0F0	
+min_age	18	17		
+default_color	#F0F0F0			
+default_value	0,254			

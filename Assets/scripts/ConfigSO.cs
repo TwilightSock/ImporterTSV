@@ -33,6 +33,11 @@ namespace JuiceKit
                         List<string> fieldList = new List<string>();
                         for (int itr = 1; itr < _configRaw[i].Length; itr++)
                         {
+                            if (_configRaw[i][itr] == "")
+                            {
+                                continue;
+                            }
+
                             if (_configRaw[i][itr].Contains(' '))
                             {
                                 fieldList.Add(String.Concat(_configRaw[i][itr].Split(' ')));
@@ -55,6 +60,11 @@ namespace JuiceKit
                             
                             for (int j = 1; j < _configRaw[itr].Length;j++)
                             {
+                                if (_configRaw[itr][j] == "")
+                                {
+                                    continue;
+                                }
+
                                 if (objInstance.GetType().GetField(fieldList[j-1], BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase).FieldType.IsEquivalentTo(typeof(UnityEngine.Color)))
                                 {
                                     objInstance.GetType().GetField(fieldList[j - 1],
@@ -90,12 +100,17 @@ namespace JuiceKit
                         string bufferString = String.Empty;
                         for (int j = 1; j < _configRaw[i].Length; j++)
                         {
+                            if (_configRaw[i][j] == "")
+                            {
+                                continue;
+                            }
+
                             if (_configRaw[i][j] == " ")
                             {
                                 break;
                             }
 
-                            bufferString += _configRaw[i][j];
+                            bufferString = _configRaw[i][j];
                         }
 
                         if (field.FieldType.IsEquivalentTo(typeof(UnityEngine.Color)))

@@ -17,12 +17,15 @@ MonoBehaviour:
     - id: item1
       cost: 10
       tags: '#some_string'
+      smth: 5
     - id: item1
       cost: 15
       tags: '#other_string'
+      smth: 6
     - id: item1
       cost: 20
       tags: '#item_str'
+      smth: 7
     other_Items:
     - name: item1
       isTrue: 1
@@ -33,5 +36,6 @@ MonoBehaviour:
     - name: item1
       isTrue: 1
       color: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
-    min_Age: 18
+    min_Age: 17
     default_Color: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
+    default_value: 0.254
