@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 
 namespace JuiceKit
@@ -12,6 +8,7 @@ namespace JuiceKit
     [CreateAssetMenu(fileName = "Config", menuName = "Configs/Config")]
     class ConfigSO : BaseConfigSO<Config>
     {
+        private BindingFlags BINDING_FLAGS = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase;
         protected override void ParseRaw(string[][] _configRaw)
         {
             Config config = new Config();
@@ -25,29 +22,18 @@ namespace JuiceKit
 
                 if (_configRaw[i][0] != "")
                 {
-                    FieldInfo field = configType.GetField(_configRaw[i][0], BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
+                    FieldInfo field = configType.GetField(_configRaw[i][0], BINDING_FLAGS);
+                    if (field is null) 
+                    {
+                        Debug.LogError($"Config does not contain a field {_configRaw[i][0]}");
+                        continue;
+                    }
                     if (field.FieldType.IsArray)
                     {
                         List<object> objList = new List<object>();
                         
-                        List<string> fieldList = new List<string>();
-                        for (int itr = 1; itr < _configRaw[i].Length; itr++)
-                        {
-                            if (_configRaw[i][itr] == "")
-                            {
-                                continue;
-                            }
-
-                            if (_configRaw[i][itr].Contains(' '))
-                            {
-                                fieldList.Add(String.Concat(_configRaw[i][itr].Split(' ')));
-                            }
-                            else
-                            {
-                                fieldList.Add(_configRaw[i][itr]);
-                            }
-                            
-                        }
+                        List<string> fieldList = GetParametersList(_configRaw[i]);
+                        
 
                         for (int itr = i + 1; itr < _configRaw.Length; itr++)
                         {
@@ -65,23 +51,15 @@ namespace JuiceKit
                                     continue;
                                 }
 
-                                if (objInstance.GetType().GetField(fieldList[j-1], BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase).FieldType.IsEquivalentTo(typeof(UnityEngine.Color)))
+                                if (objInstance.GetType().GetField(fieldList[j - 1], BINDING_FLAGS) is null)
                                 {
-                                    objInstance.GetType().GetField(fieldList[j - 1],
-                                            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase)
-                                        .SetValue(objInstance, _configRaw[itr][j].StringToColor());
+                                    Debug.LogError($"{objInstance.GetType().Name} list does not contain a field {fieldList[j-1]}");
+                                    continue;
+                                }
+                                objInstance.GetType().GetField(fieldList[j - 1], BINDING_FLAGS)
+                                        .SetValue(objInstance,ConvertType(_configRaw[itr][j],
+                                                objInstance.GetType().GetField(fieldList[j - 1], BINDING_FLAGS).FieldType));
 
-                                }
-                                else
-                                {
-                                    objInstance.GetType().GetField(fieldList[j - 1],
-                                            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase)
-                                        .SetValue(objInstance,
-                                            Convert.ChangeType(_configRaw[itr][j],
-                                                objInstance.GetType().GetField(fieldList[j - 1],
-                                                    BindingFlags.Instance | BindingFlags.NonPublic |
-                                                    BindingFlags.IgnoreCase).FieldType));
-                                }
                             }
                             objList.Add(objInstance);
                         }
@@ -113,17 +91,8 @@ namespace JuiceKit
                             bufferString = _configRaw[i][j];
                         }
 
-                        if (field.FieldType.IsEquivalentTo(typeof(UnityEngine.Color)))
-                        {
-                            field.SetValue(config, bufferString.StringToColor());
-                        }
-                        else
-                        {
-                            field.SetValue(config, Convert.ChangeType(bufferString, field.FieldType));
-                        }
+                        field.SetValue(config, ConvertType(bufferString, field.FieldType));
 
-                       
-                        
                     }
                 }
             }
@@ -132,6 +101,34 @@ namespace JuiceKit
 
         }
 
+        private object ConvertType(string value,Type type) 
+        {
+            if (type.IsEquivalentTo(typeof(UnityEngine.Color)))
+            {
+                return value.StringToColor();
+            }
+            else 
+            {
+                return Convert.ChangeType(value, type);
+            }
+        }
+
+        private List<string> GetParametersList(string[] tableRaw) 
+        {
+            List<string> list = new List<string>();
+            for (int itr = 1; itr < tableRaw.Length; itr++)
+            {
+                if (tableRaw[itr] == "")
+                {
+                    continue;
+                }
+              
+                list.Add(String.Concat(tableRaw[itr].Split(' ')));              
+
+            }
+
+            return list;
+        }
         protected override void Validate()
         {
            
